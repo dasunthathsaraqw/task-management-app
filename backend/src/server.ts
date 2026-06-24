@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/database";
 import authRouter from "./routes/authRoutes";
+import adminRouter from "./routes/adminRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,9 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRouter);
+
+// Admin Routes (Task, User, Reports)
+app.use("/api", adminRouter);
 
 // Basic route
 app.get("/", (req: Request, res: Response) => {
