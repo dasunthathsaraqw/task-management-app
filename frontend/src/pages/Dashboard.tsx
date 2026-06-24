@@ -10,7 +10,12 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-sm text-gray-600">
+              Logged in as: <span className="font-medium">{user?.role}</span>
+            </p>
+          </div>
           <Button variant="danger" onClick={logout}>
             Logout
           </Button>
@@ -47,20 +52,32 @@ const Dashboard: React.FC = () => {
             <h3 className="font-semibold text-gray-900 mb-2">Your Role</h3>
             {user?.role === "admin" ? (
               <p className="text-gray-600">
-                You have admin access. You can view and manage all tasks.
+                You have{" "}
+                <span className="font-medium text-purple-600">admin</span>{" "}
+                access. You can view and manage all tasks in the system.
               </p>
             ) : (
               <p className="text-gray-600">
-                You have user access. You can view and manage your own tasks.
+                You have <span className="font-medium text-blue-600">user</span>{" "}
+                access. You can view and manage your own tasks.
               </p>
             )}
           </Card>
           <Card>
             <h3 className="font-semibold text-gray-900 mb-2">Quick Stats</h3>
             <div className="space-y-2 text-gray-600">
-              <p>Total Tasks: 0</p>
-              <p>Open Tasks: 0</p>
-              <p>Completed: 0</p>
+              <div className="flex justify-between">
+                <span>Total Tasks:</span>
+                <span className="font-medium">0</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Open Tasks:</span>
+                <span className="font-medium">0</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Completed:</span>
+                <span className="font-medium">0</span>
+              </div>
             </div>
           </Card>
         </div>

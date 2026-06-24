@@ -7,8 +7,10 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import UserLogin from "./pages/UserLogin";
+import UserRegister from "./pages/UserRegister";
+import AdminLogin from "./pages/AdminLogin";
+import AdminRegister from "./pages/AdminRegister";
 import Dashboard from "./pages/Dashboard";
 
 const App: React.FC = () => {
@@ -16,8 +18,15 @@ const App: React.FC = () => {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {/* User Routes */}
+          <Route path="/login" element={<UserLogin />} />
+          <Route path="/register" element={<UserRegister />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/register" element={<AdminRegister />} />
+
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={
@@ -26,21 +35,9 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <div className="p-6">
-                  <h1 className="text-2xl font-bold">Admin Panel</h1>
-                  <p className="text-gray-600">
-                    Only admins can see this page.
-                  </p>
-                </div>
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

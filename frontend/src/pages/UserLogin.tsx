@@ -6,7 +6,6 @@ import * as yup from "yup";
 import { useAuth } from "../context/AuthContext";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { Select } from "../components/Select";
 import { Card } from "../components/Card";
 import { Alert } from "../components/Alert";
 import type { LoginFormData } from "../types/auth";
@@ -17,13 +16,9 @@ const loginSchema = yup.object({
     .string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters"),
-  role: yup
-    .string()
-    .oneOf(["admin", "user"], "Invalid role")
-    .required("Role is required"),
 });
 
-const Login: React.FC = () => {
+const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [error, setError] = useState<string>("");
@@ -35,9 +30,6 @@ const Login: React.FC = () => {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
-    defaultValues: {
-      role: "user",
-    },
   });
 
   const onSubmit = async (data: LoginFormData) => {
@@ -45,7 +37,7 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(data);
+      await login(data, "user");
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
@@ -58,10 +50,8 @@ const Login: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Task Management System
-          </h1>
-          <p className="text-gray-600 mt-2">Sign in to your account</p>
+          <h1 className="text-2xl font-bold text-gray-900">User Login</h1>
+          <p className="text-gray-600 mt-2">Sign in to your user account</p>
         </div>
 
         {error && (
@@ -85,16 +75,6 @@ const Login: React.FC = () => {
             error={errors.password?.message}
           />
 
-          <Select
-            label="Role"
-            options={[
-              { value: "user", label: "User" },
-              { value: "admin", label: "Admin" },
-            ]}
-            {...registerField("role")}
-            error={errors.role?.message}
-          />
-
           <Button type="submit" fullWidth loading={loading}>
             Sign In
           </Button>
@@ -106,7 +86,17 @@ const Login: React.FC = () => {
             to="/register"
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
-            Create Account
+            Create User Account
+          </Link>
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+          <p className="text-sm text-gray-600">Are you an admin?</p>
+          <Link
+            to="/admin/login"
+            className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+          >
+            Go to Admin Login →
           </Link>
         </div>
       </Card>
@@ -114,4 +104,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default UserLogin;

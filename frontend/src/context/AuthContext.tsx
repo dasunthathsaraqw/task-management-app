@@ -5,8 +5,8 @@ import type { User, LoginFormData, RegisterFormData } from "../types/auth";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (data: LoginFormData) => Promise<void>;
-  register: (data: RegisterFormData) => Promise<void>;
+  login: (data: LoginFormData, role: "admin" | "user") => Promise<void>;
+  register: (data: RegisterFormData, role: "admin" | "user") => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -29,9 +29,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false);
   }, []);
 
-  const login = async (data: LoginFormData) => {
+  const login = async (data: LoginFormData, role: "admin" | "user") => {
     try {
-      const response = await api.post("/auth/login", data);
+      const response = await api.post("/auth/login", {
+        ...data,
+        role,
+      });
 
       if (response.data.success) {
         const { user, accessToken, refreshToken } = response.data.data;
@@ -48,9 +51,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const register = async (data: RegisterFormData) => {
+  const register = async (data: RegisterFormData, role: "admin" | "user") => {
     try {
-      const response = await api.post("/auth/register", data);
+      const response = await api.post("/auth/register", {
+        ...data,
+        role,
+      });
 
       if (response.data.success) {
         const { user, accessToken } = response.data.data;

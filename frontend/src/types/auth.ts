@@ -3,13 +3,11 @@ export interface RegisterFormData {
   email: string;
   password: string;
   confirmPassword: string;
-  role: "admin" | "user";
 }
 
 export interface LoginFormData {
   email: string;
   password: string;
-  role: "admin" | "user";
 }
 
 export interface User {

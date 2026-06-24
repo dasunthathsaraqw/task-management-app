@@ -6,7 +6,6 @@ import * as yup from "yup";
 import { useAuth } from "../context/AuthContext";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
-import { Select } from "../components/Select";
 import { Card } from "../components/Card";
 import { Alert } from "../components/Alert";
 import type { RegisterFormData } from "../types/auth";
@@ -25,13 +24,9 @@ const registerSchema = yup.object({
     .string()
     .required("Confirm password is required")
     .oneOf([yup.ref("password")], "Passwords must match"),
-  role: yup
-    .string()
-    .oneOf(["admin", "user"], "Invalid role")
-    .required("Role is required"),
 });
 
-const Register: React.FC = () => {
+const AdminRegister: React.FC = () => {
   const navigate = useNavigate();
   const { register: registerUser } = useAuth();
   const [error, setError] = useState<string>("");
@@ -43,9 +38,6 @@ const Register: React.FC = () => {
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: yupResolver(registerSchema),
-    defaultValues: {
-      role: "user",
-    },
   });
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -53,7 +45,7 @@ const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      await registerUser(data);
+      await registerUser(data, "admin");
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
@@ -64,10 +56,15 @@ const Register: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md border-t-4 border-purple-600">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-gray-600 mt-2">Register to get started</p>
+          <div className="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full mb-2">
+            Admin Access
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Create Admin Account
+          </h1>
+          <p className="text-gray-600 mt-2">Register as an admin</p>
         </div>
 
         {error && (
@@ -78,7 +75,7 @@ const Register: React.FC = () => {
           <Input
             type="text"
             label="Username"
-            placeholder="Choose a username"
+            placeholder="Choose an admin username"
             {...registerField("username")}
             error={errors.username?.message}
           />
@@ -86,7 +83,7 @@ const Register: React.FC = () => {
           <Input
             type="email"
             label="Email Address"
-            placeholder="Enter your email"
+            placeholder="Enter your admin email"
             {...registerField("email")}
             error={errors.email?.message}
           />
@@ -94,7 +91,7 @@ const Register: React.FC = () => {
           <Input
             type="password"
             label="Password"
-            placeholder="Create a password"
+            placeholder="Create a strong password"
             {...registerField("password")}
             error={errors.password?.message}
           />
@@ -107,28 +104,28 @@ const Register: React.FC = () => {
             error={errors.confirmPassword?.message}
           />
 
-          <Select
-            label="Role"
-            options={[
-              { value: "user", label: "User" },
-              { value: "admin", label: "Admin" },
-            ]}
-            {...registerField("role")}
-            error={errors.role?.message}
-          />
-
           <Button type="submit" fullWidth loading={loading}>
-            Create Account
+            Create Admin Account
           </Button>
         </form>
 
         <div className="mt-4 text-center text-sm">
-          <span className="text-gray-600">Already have an account?</span>{" "}
+          <span className="text-gray-600">Already have an admin account?</span>{" "}
           <Link
-            to="/login"
-            className="text-blue-600 hover:text-blue-700 font-medium"
+            to="/admin/login"
+            className="text-purple-600 hover:text-purple-700 font-medium"
           >
-            Sign In
+            Sign In as Admin
+          </Link>
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+          <p className="text-sm text-gray-600">Need a user account?</p>
+          <Link
+            to="/register"
+            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+          >
+            Create User Account →
           </Link>
         </div>
       </Card>
@@ -136,4 +133,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default AdminRegister;
