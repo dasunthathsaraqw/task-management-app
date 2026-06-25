@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { updateUserTask } from "../../services/userTaskService";
+import { updateUserTask, deleteUserTask } from "../../services/userTaskService";
 import { useToast } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 import type { Task } from "../../types/task";
 
 interface TaskDetailModalProps {
@@ -41,8 +42,11 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   onSuccess,
 }) => {
   const { showSuccess, showError } = useToast();
+  const { user } = useAuth();
   const [editingField, setEditingField] = useState<EditableField>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editedTask, setEditedTask] = useState<Partial<Task>>({});
 
   if (!isOpen || !task) return null;
@@ -84,7 +88,23 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   const handleClose = () => {
     setEditedTask({});
     setEditingField(null);
+    setShowDeleteConfirm(false);
     onClose();
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      await deleteUserTask(task._id);
+      showSuccess("Task deleted successfully");
+      onSuccess();
+      onClose();
+    } catch (err: any) {
+      showError(err.message || "Failed to delete task");
+      setShowDeleteConfirm(false);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const formattedDueDate = currentTask.dueDate
@@ -535,23 +555,58 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/30 flex justify-end gap-3 flex-shrink-0">
-            <button
-              onClick={handleClose}
-              className="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
-            >
-              Close
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={!hasChanges || submitting}
-              className="flex items-center gap-2 px-5 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
-            >
-              {submitting && (
-                <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/30 flex justify-between gap-3 flex-shrink-0">
+            <div>
+              {user?.id === task.createdBy?._id && (
+                showDeleteConfirm ? (
+                  <div className="flex items-center gap-2 animate-fade-in">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 mr-1">Are you sure?</span>
+                    <button
+                      onClick={handleDelete}
+                      disabled={deleting}
+                      className="px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 font-semibold rounded-md transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      {deleting ? "Deleting..." : "Yes, delete"}
+                    </button>
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      disabled={deleting}
+                      className="px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold rounded-md transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="flex items-center gap-1.5 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors cursor-pointer"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete
+                  </button>
+                )
               )}
-              Save Changes
-            </button>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleClose}
+                className="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={!hasChanges || submitting}
+                className="flex items-center gap-2 px-5 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+              >
+                {submitting && (
+                  <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                )}
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -32,3 +32,7 @@ export const updateUserTaskStatus = async (id: string, status: string): Promise<
   const response = await api.patch(`/user/tasks/${id}/status`, { status });
   return response.data.data;
 };
+
+export const deleteUserTask = async (id: string): Promise<void> => {
+  await api.delete(`/user/tasks/${id}`);
+};
