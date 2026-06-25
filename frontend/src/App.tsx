@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
@@ -25,8 +26,9 @@ import { Reports } from "./pages/admin/Reports";
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <ToastProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ToastProvider>
         <Router>
           <Routes>
             {/* User Routes */}
@@ -70,8 +72,9 @@ const App: React.FC = () => {
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </Router>
-      </ToastProvider>
-    </AuthProvider>
+        </ToastProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 
