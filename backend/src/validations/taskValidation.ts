@@ -22,6 +22,11 @@ export const createTaskSchema = yup.object({
     .oneOf(["Low", "Medium", "High"], "Priority must be one of Low, Medium, High")
     .default("Medium"),
 
+  status: yup
+    .string()
+    .oneOf(["Open", "In Progress", "Testing", "Done"], "Invalid status")
+    .optional(),
+
   dueDate: yup
     .date()
     .required("Due date is required")

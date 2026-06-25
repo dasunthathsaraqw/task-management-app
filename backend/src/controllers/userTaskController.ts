@@ -52,7 +52,7 @@ export const getUserTasks = async (req: Request, res: Response) => {
  */
 export const createUserTask = async (req: Request, res: Response) => {
   try {
-    const { title, description, priority, dueDate } = req.body;
+    const { title, description, priority, dueDate, status } = req.body;
     const userId = req.user?.id;
 
     if (!userId) {
@@ -64,6 +64,9 @@ export const createUserTask = async (req: Request, res: Response) => {
       });
     }
 
+    const validStatuses = ["Open", "In Progress", "Testing", "Done"];
+    const taskStatus = status && validStatuses.includes(status) ? status : "Open";
+
     const task = new Task({
       title,
       description,
@@ -71,10 +74,10 @@ export const createUserTask = async (req: Request, res: Response) => {
       dueDate,
       assignedTo: null, // Normal users cannot assign to others
       createdBy: userId,
-      status: "Open",
+      status: taskStatus,
       statusHistory: [
         {
-          status: "Open",
+          status: taskStatus,
           updatedAt: new Date(),
           updatedBy: userId,
         },

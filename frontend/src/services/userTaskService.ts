@@ -11,6 +11,7 @@ export const createUserTask = async (data: {
   description: string;
   priority: string;
   dueDate: string;
+  status?: string;
 }): Promise<Task> => {
   const response = await api.post("/user/tasks", data);
   return response.data.data;
