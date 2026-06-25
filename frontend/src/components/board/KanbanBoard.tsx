@@ -158,7 +158,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks: initialTasks, o
   };
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 h-full snap-x snap-mandatory">
+    <div className="flex gap-4 overflow-x-auto pb-4 h-full snap-x snap-mandatory [scrollbar-color:theme(colors.slate.300)_transparent] dark:[scrollbar-color:theme(colors.slate.600)_transparent]">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
