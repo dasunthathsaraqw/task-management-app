@@ -32,7 +32,12 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await api.post("/auth/refresh-token");
+        // Use base axios to avoid intercepting the refresh request itself
+        const response = await axios.post(
+          `${API_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
         const { accessToken } = response.data.data;
 
         localStorage.setItem("accessToken", accessToken);
