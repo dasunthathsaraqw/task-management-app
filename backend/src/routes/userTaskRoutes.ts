@@ -4,6 +4,7 @@ import {
   createUserTask,
   updateUserTask,
   updateUserTaskStatus,
+  deleteUserTask,
 } from "../controllers/userTaskController";
 import yupValidator from "../middleware/yupValidator";
 import {
@@ -19,5 +20,6 @@ userTaskRouter.get("/", getUserTasks);
 userTaskRouter.post("/", yupValidator(createTaskSchema), createUserTask);
 userTaskRouter.put("/:id", yupValidator(updateTaskSchema), updateUserTask);
 userTaskRouter.patch("/:id/status", yupValidator(updateStatusSchema), updateUserTaskStatus);
+userTaskRouter.delete("/:id", deleteUserTask);
 
 export default userTaskRouter;

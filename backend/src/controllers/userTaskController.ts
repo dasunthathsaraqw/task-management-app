@@ -266,3 +266,61 @@ export const updateUserTaskStatus = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * Delete a task as a normal user.
+ * Only the creator of the task can delete it.
+ */
+export const deleteUserTask = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return response({
+        res,
+        status: 401,
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return response({
+        res,
+        status: 404,
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    // Only allow creator to delete
+    if (task.createdBy?.toString() !== userId) {
+      return response({
+        res,
+        status: 403,
+        success: false,
+        message: "Access denied: Only the creator can delete this task",
+      });
+    }
+
+    await Task.findByIdAndDelete(id);
+
+    return response({
+      res,
+      status: 200,
+      success: true,
+      message: "Task deleted successfully",
+    });
+  } catch (error: any) {
+    return response({
+      res,
+      status: 500,
+      success: false,
+      message: "Error deleting task",
+      error: error.message,
+    });
+  }
+};

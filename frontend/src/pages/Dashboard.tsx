@@ -22,6 +22,10 @@ const Dashboard: React.FC = () => {
   >(undefined);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
+  // Search and Filtering state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterPriority, setFilterPriority] = useState<string>("All");
+
   const fetchTasks = async () => {
     try {
       setLoading(true);
@@ -64,6 +68,16 @@ const Dashboard: React.FC = () => {
   };
 
   const anyModalOpen = isCreateModalOpen || !!selectedTask;
+
+  // Derived state for filtered tasks
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesPriority =
+      filterPriority === "All" || task.priority === filterPriority;
+    return matchesSearch && matchesPriority;
+  });
 
   return (
     <div className="min-h-screen bg-[#0079BF] dark:bg-slate-900 transition-colors flex flex-col">
@@ -133,25 +147,6 @@ const Dashboard: React.FC = () => {
               )}
             </button>
 
-            <Button onClick={handleOpenCreate}>
-              <span className="flex items-center">
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Create Task
-              </span>
-            </Button>
-
             <button
               onClick={logout}
               className="p-2 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors cursor-pointer"
@@ -176,15 +171,51 @@ const Dashboard: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full p-6 overflow-hidden relative">
+      <main className="flex-1 max-w-7xl mx-auto w-full p-6 flex flex-col overflow-hidden relative">
+        {/* Filters Bar */}
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-3 mb-4">
+          <div className="relative w-full sm:w-64">
+            <svg
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search tasks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-3 py-1.5 bg-white/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-purple-500/50 backdrop-blur-sm transition-all placeholder-slate-400 shadow-sm"
+            />
+          </div>
+          <select
+            value={filterPriority}
+            onChange={(e) => setFilterPriority(e.target.value)}
+            className="w-full sm:w-auto px-3 py-1.5 bg-white/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-purple-500/50 backdrop-blur-sm outline-none cursor-pointer shadow-sm"
+          >
+            <option value="All">All Priorities</option>
+            <option value="Low">Low Priority</option>
+            <option value="Medium">Medium Priority</option>
+            <option value="High">High Priority</option>
+          </select>
+        </div>
+
         {loading ? (
-          <div className="h-full flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white dark:border-purple-400"></div>
           </div>
         ) : (
-          <div className="h-[calc(100vh-120px)] pb-4 overflow-hidden">
+          <div className="flex-1 pb-4 overflow-hidden">
             <KanbanBoard
-              tasks={tasks}
+              tasks={filteredTasks}
               onTaskClick={handleTaskClick}
               onAddTask={handleAddTask}
             />
