@@ -5,8 +5,8 @@ import type { User, LoginFormData, RegisterFormData } from "../types/auth";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (data: LoginFormData, role: "admin" | "user") => Promise<void>;
-  register: (data: RegisterFormData, role: "admin" | "user") => Promise<void>;
+  login: (data: LoginFormData, role: "admin" | "user") => Promise<User>;
+  register: (data: RegisterFormData, role: "admin" | "user") => Promise<User>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -29,7 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false);
   }, []);
 
-  const login = async (data: LoginFormData, role: "admin" | "user") => {
+  const login = async (data: LoginFormData, role: "admin" | "user"): Promise<User> => {
     try {
       const response = await api.post("/auth/login", {
         ...data,
@@ -37,12 +37,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       if (response.data.success) {
-        const { user, accessToken, refreshToken } = response.data.data;
+        const { user, accessToken } = response.data.data;
 
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
 
         setUser(user);
+        return user;
       } else {
         throw new Error(response.data.message);
       }
@@ -51,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const register = async (data: RegisterFormData, role: "admin" | "user") => {
+  const register = async (data: RegisterFormData, role: "admin" | "user"): Promise<User> => {
     try {
       const response = await api.post("/auth/register", {
         ...data,
@@ -65,6 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem("user", JSON.stringify(user));
 
         setUser(user);
+        return user;
       } else {
         throw new Error(response.data.message);
       }

@@ -45,8 +45,8 @@ const UserRegister: React.FC = () => {
     setLoading(true);
 
     try {
-      await registerUser(data, "user");
-      navigate("/dashboard");
+      const user = await registerUser(data, "user");
+      navigate(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {

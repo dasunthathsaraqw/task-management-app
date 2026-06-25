@@ -37,8 +37,8 @@ const UserLogin: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(data, "user");
-      navigate("/dashboard");
+      const user = await login(data, "user");
+      navigate(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
