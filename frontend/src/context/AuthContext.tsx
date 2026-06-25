@@ -48,6 +48,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         throw new Error(response.data.message);
       }
     } catch (error: any) {
+      if (Array.isArray(error.response?.data?.error)) {
+        throw error.response.data.error;
+      }
       throw new Error(error.response?.data?.message || "Login failed");
     }
   };
@@ -71,6 +74,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         throw new Error(response.data.message);
       }
     } catch (error: any) {
+      if (Array.isArray(error.response?.data?.error)) {
+        throw error.response.data.error;
+      }
       throw new Error(error.response?.data?.message || "Registration failed");
     }
   };
