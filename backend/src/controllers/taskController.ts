@@ -234,6 +234,7 @@ export const updateTask = async (req: Request, res: Response) => {
       });
     }
 
+
     // Verify assigned user if updated
     if (assignedTo) {
       const userExists = await User.findById(assignedTo);
@@ -351,6 +352,7 @@ export const updateTaskStatus = async (req: Request, res: Response) => {
         message: "Task not found",
       });
     }
+
 
     if (task.status === status) {
       return response({

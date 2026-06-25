@@ -1,87 +1,117 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { Button } from "../components/Button";
-import { Card } from "../components/Card";
+import { KanbanBoard } from "../components/board/KanbanBoard";
+import { CreateTaskModal } from "../components/tasks/CreateTaskModal";
+import { EditTaskModal } from "../components/tasks/EditTaskModal";
+import { getUserTasks } from "../services/userTaskService";
+import type { Task } from "../types/task";
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
+  const { showError } = useToast();
+  
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      // We pass no filters initially to get all tasks associated with this user
+      // A large limit is passed to ensure all tasks are visible on the board
+      const data = await getUserTasks();
+      setTasks(data.tasks);
+    } catch (error: any) {
+      showError(error.message || "Failed to load tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+  };
+
+  const handleCreateSuccess = () => {
+    setIsCreateModalOpen(false);
+    fetchTasks();
+  };
+
+  const handleEditSuccess = () => {
+    setSelectedTask(null);
+    fetchTasks();
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-sm text-gray-600">
-              Logged in as: <span className="font-medium">{user?.role}</span>
-            </p>
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-10 px-6 py-4 shadow-sm">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-bold text-slate-800 tracking-tight">Task Board</h1>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+              {user?.role}
+            </span>
           </div>
-          <Button variant="danger" onClick={logout}>
-            Logout
-          </Button>
-        </div>
-
-        <Card className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Welcome, {user?.username}!
-          </h2>
-          <div className="space-y-2 text-gray-700">
-            <p>
-              <span className="font-medium">Email:</span> {user?.email}
-            </p>
-            <p>
-              <span className="font-medium">Role:</span>{" "}
-              <span
-                className={`px-2 py-1 rounded text-sm ${
-                  user?.role === "admin"
-                    ? "bg-purple-100 text-purple-800"
-                    : "bg-blue-100 text-blue-800"
-                }`}
-              >
-                {user?.role}
-              </span>
-            </p>
-            <p>
-              <span className="font-medium">User ID:</span> {user?.id}
-            </p>
-          </div>
-        </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card>
-            <h3 className="font-semibold text-gray-900 mb-2">Your Role</h3>
-            {user?.role === "admin" ? (
-              <p className="text-gray-600">
-                You have{" "}
-                <span className="font-medium text-purple-600">admin</span>{" "}
-                access. You can view and manage all tasks in the system.
-              </p>
-            ) : (
-              <p className="text-gray-600">
-                You have <span className="font-medium text-blue-600">user</span>{" "}
-                access. You can view and manage your own tasks.
-              </p>
-            )}
-          </Card>
-          <Card>
-            <h3 className="font-semibold text-gray-900 mb-2">Quick Stats</h3>
-            <div className="space-y-2 text-gray-600">
-              <div className="flex justify-between">
-                <span>Total Tasks:</span>
-                <span className="font-medium">0</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Open Tasks:</span>
-                <span className="font-medium">0</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Completed:</span>
-                <span className="font-medium">0</span>
-              </div>
+          
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-slate-600 hidden md:block">
+              Welcome back, <span className="font-semibold text-slate-800">{user?.username}</span>
             </div>
-          </Card>
+            <Button onClick={() => setIsCreateModalOpen(true)}>
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Create Task
+              </span>
+            </Button>
+            <button
+              onClick={logout}
+              className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+              title="Logout"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 max-w-full mx-auto w-full p-6 overflow-hidden">
+        {loading ? (
+          <div className="h-full flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          </div>
+        ) : (
+          <div className="h-[calc(100vh-120px)] pb-4 overflow-hidden">
+            <KanbanBoard tasks={tasks} onTaskClick={handleTaskClick} />
+          </div>
+        )}
+      </main>
+
+      {/* Modals */}
+      <CreateTaskModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={handleCreateSuccess}
+      />
+
+      <EditTaskModal
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onSuccess={handleEditSuccess}
+      />
     </div>
   );
 };

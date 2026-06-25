@@ -6,8 +6,10 @@ import { Input } from "../Input";
 import { Button } from "../Button";
 import { Select } from "../Select";
 import { getAllUsers } from "../../services/userService";
-import { updateTask } from "../../services/taskService";
+import { updateTask as updateAdminTask } from "../../services/taskService";
+import { updateUserTask } from "../../services/userTaskService";
 import { useToast } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 import type { User } from "../../types/auth";
 import type { Task } from "../../types/task";
 
@@ -43,6 +45,7 @@ type FormData = yup.InferType<typeof schema>;
 
 export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onClose, onSuccess }) => {
   const { showSuccess, showError } = useToast();
+  const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -58,7 +61,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
   });
 
   useEffect(() => {
-    if (isOpen && task) {
+    if (isOpen && task && user?.role === "admin") {
       setLoadingUsers(true);
       getAllUsers()
         .then((data) => {
@@ -83,21 +86,28 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
         assignedTo: task.assignedTo ? (task.assignedTo._id || (task.assignedTo as any).id) : "",
       });
     }
-  }, [isOpen, task, reset, showError]);
+  }, [isOpen, task, reset, showError, user]);
 
   if (!isOpen || !task) return null;
 
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
     try {
-      await updateTask(task._id, {
+      const taskPayload = {
         title: data.title,
         description: data.description,
         priority: data.priority,
         status: data.status,
         dueDate: data.dueDate,
         assignedTo: data.assignedTo === "" ? null : data.assignedTo,
-      });
+      };
+
+      if (user?.role === "admin") {
+        await updateAdminTask(task._id, taskPayload);
+      } else {
+        await updateUserTask(task._id, taskPayload);
+      }
+
       showSuccess("Task updated successfully");
       onSuccess();
       onClose();
@@ -188,13 +198,15 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
               error={errors.dueDate?.message}
             />
 
-            <Select
-              label="Assignee"
-              options={userOptions}
-              {...register("assignedTo")}
-              error={errors.assignedTo?.message}
-              disabled={loadingUsers}
-            />
+            {user?.role === "admin" && (
+              <Select
+                label="Assignee"
+                options={userOptions}
+                {...register("assignedTo")}
+                error={errors.assignedTo?.message}
+                disabled={loadingUsers}
+              />
+            )}
           </div>
 
           {/* Actions */}

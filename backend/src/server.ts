@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/database";
 import authRouter from "./routes/authRoutes";
 import adminRouter from "./routes/adminRoutes";
+import userTaskRouter from "./routes/userTaskRoutes";
+import { authenticate } from "./middleware/auth";
 
 // Load environment variables
 dotenv.config();
@@ -29,6 +31,10 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRouter);
+
+// Normal User Routes (must be registered BEFORE adminRouter to avoid the
+// catch-all authorize("admin") middleware blocking normal users)
+app.use("/api/user/tasks", authenticate, userTaskRouter);
 
 // Admin Routes (Task, User, Reports)
 app.use("/api", adminRouter);

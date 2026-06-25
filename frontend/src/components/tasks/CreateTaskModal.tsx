@@ -7,8 +7,10 @@ import { Button } from "../Button";
 import { Select } from "../Select";
 import { Card } from "../Card";
 import { getAllUsers } from "../../services/userService";
-import { createTask } from "../../services/taskService";
+import { createTask as createAdminTask } from "../../services/taskService";
+import { createUserTask } from "../../services/userTaskService";
 import { useToast } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 import type { User } from "../../types/auth";
 
 interface CreateTaskModalProps {
@@ -41,6 +43,7 @@ type FormData = yup.InferType<typeof schema>;
 
 export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { showSuccess, showError } = useToast();
+  const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -59,7 +62,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
   });
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && user?.role === "admin") {
       setLoadingUsers(true);
       getAllUsers()
         .then((data) => {
@@ -72,20 +75,27 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
           setLoadingUsers(false);
         });
     }
-  }, [isOpen, showError]);
+  }, [isOpen, showError, user]);
 
   if (!isOpen) return null;
 
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
     try {
-      await createTask({
+      const taskPayload = {
         title: data.title,
         description: data.description,
         priority: data.priority || "Medium",
         dueDate: data.dueDate,
         assignedTo: data.assignedTo === "" ? null : data.assignedTo,
-      });
+      };
+
+      if (user?.role === "admin") {
+        await createAdminTask(taskPayload);
+      } else {
+        await createUserTask(taskPayload);
+      }
+
       showSuccess("Task created successfully");
       reset();
       onSuccess();
@@ -164,13 +174,15 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
             />
           </div>
 
-          <Select
-            label="Assign To User"
-            options={userOptions}
-            {...register("assignedTo")}
-            error={errors.assignedTo?.message}
-            disabled={loadingUsers}
-          />
+          {user?.role === "admin" && (
+            <Select
+              label="Assign To User"
+              options={userOptions}
+              {...register("assignedTo")}
+              error={errors.assignedTo?.message}
+              disabled={loadingUsers}
+            />
+          )}
 
           {/* Actions */}
           <div className="pt-4 border-t border-slate-200 flex justify-end space-x-3 bg-slate-50 -mx-6 -mb-6 p-6">
