@@ -29,6 +29,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       ),
     },
     {
+      to: "/admin/board",
+      label: "Board",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-5 h-5"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.5-6h15m-15-6h15" />
+        </svg>
+      ),
+    },
+    {
       to: "/admin/tasks",
       label: "Tasks",
       icon: (

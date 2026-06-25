@@ -17,6 +17,7 @@ import Dashboard from "./pages/Dashboard";
 // Admin Imports
 import { AdminLayout } from "./components/layout/AdminLayout";
 import { AdminDashboard } from "./pages/admin/AdminDashboard";
+import { AdminBoard } from "./pages/admin/AdminBoard";
 import { AllTasks } from "./pages/admin/AllTasks";
 import { TaskDetails } from "./pages/admin/TaskDetails";
 import { UserManagement } from "./pages/admin/UserManagement";
@@ -56,6 +57,7 @@ const App: React.FC = () => {
               }
             >
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="board" element={<AdminBoard />} />
               <Route path="tasks" element={<AllTasks />} />
               <Route path="tasks/:id" element={<TaskDetails />} />
               <Route path="users" element={<UserManagement />} />

@@ -11,7 +11,7 @@ import type { Task } from "../types/task";
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const { showError } = useToast();
-  
+
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -56,22 +56,38 @@ const Dashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm p-1 border border-slate-100">
-              <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              <img
+                src="/images/logo.png"
+                alt="Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
-            <h1 className="text-xl font-bold text-slate-800 tracking-tight">Task Board</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-              {user?.role}
-            </span>
+            <h1 className="text-xl font-bold text-slate-800 tracking-tight">
+              Task Board
+            </h1>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <div className="text-sm text-slate-600 hidden md:block">
-              Welcome back, <span className="font-semibold text-slate-800">{user?.username}</span>
+              Welcome back,{" "}
+              <span className="font-semibold text-slate-800">
+                {user?.username}
+              </span>
             </div>
             <Button onClick={() => setIsCreateModalOpen(true)}>
               <span className="flex items-center">
-                <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                <svg
+                  className="w-4 h-4 mr-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 Create Task
               </span>
@@ -81,8 +97,18 @@ const Dashboard: React.FC = () => {
               className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
               title="Logout"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
               </svg>
             </button>
           </div>

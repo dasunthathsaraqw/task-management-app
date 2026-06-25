@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Sidebar } from "./Sidebar";
 
 export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleLogout = () => {
@@ -73,7 +74,7 @@ export const AdminLayout: React.FC = () => {
 
         {/* Main Scrolling Workspace Area */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div className={location.pathname === "/admin/board" ? "w-full h-full space-y-6" : "max-w-7xl mx-auto space-y-6"}>
             <Outlet />
           </div>
         </main>
