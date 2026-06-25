@@ -61,18 +61,20 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
   });
 
   useEffect(() => {
-    if (isOpen && task && user?.role === "admin") {
-      setLoadingUsers(true);
-      getAllUsers()
-        .then((data) => {
-          setUsers(data);
-        })
-        .catch(() => {
-          showError("Failed to load users for assignment");
-        })
-        .finally(() => {
-          setLoadingUsers(false);
-        });
+    if (isOpen && task) {
+      if (user?.role === "admin") {
+        setLoadingUsers(true);
+        getAllUsers()
+          .then((data) => {
+            setUsers(data);
+          })
+          .catch(() => {
+            showError("Failed to load users for assignment");
+          })
+          .finally(() => {
+            setLoadingUsers(false);
+          });
+      }
 
       // Format date to YYYY-MM-DD for date input
       const formattedDate = task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "";

@@ -79,7 +79,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks: initialTasks, o
         if (prev[activeIndex].status !== prev[overIndex].status) {
           // Changing status
           const newTasks = [...prev];
-          newTasks[activeIndex].status = prev[overIndex].status;
+          newTasks[activeIndex] = { ...newTasks[activeIndex], status: prev[overIndex].status };
           return arrayMove(newTasks, activeIndex, overIndex);
         }
 
@@ -92,7 +92,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks: initialTasks, o
       setTasks((prev) => {
         const activeIndex = prev.findIndex((t) => t._id === activeId);
         const newTasks = [...prev];
-        newTasks[activeIndex].status = overId as Task["status"];
+        newTasks[activeIndex] = { ...newTasks[activeIndex], status: overId as Task["status"] };
         return arrayMove(newTasks, activeIndex, activeIndex);
       });
     }
@@ -131,27 +131,29 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks: initialTasks, o
 
     // If status changed, call API
     if (originalTask && originalTask.status !== newStatus) {
-      // Optimistically update
+      // Optimistically update locally first
       setTasks((prev) => {
         const index = prev.findIndex((t) => t._id === activeId);
         const updated = [...prev];
-        updated[index].status = newStatus;
+        updated[index] = { ...updated[index], status: newStatus };
         return updated;
       });
 
-      try {
-        await updateTaskStatus(task._id, newStatus);
-        // showSuccess(`Task moved to ${newStatus}`); // Optional, can be spammy
-      } catch (error: any) {
-        showError(error.message || "Failed to update task status");
-        // Revert to initial state
-        setTasks((prev) => {
-          const index = prev.findIndex((t) => t._id === activeId);
-          const reverted = [...prev];
-          reverted[index].status = originalTask.status;
-          return reverted;
-        });
-      }
+      // Update backend after 0.5s delay
+      setTimeout(async () => {
+        try {
+          await updateTaskStatus(task._id, newStatus);
+        } catch (error: any) {
+          showError(error.message || "Failed to update task status");
+          // Revert to initial state if it fails
+          setTasks((prev) => {
+            const index = prev.findIndex((t) => t._id === activeId);
+            const reverted = [...prev];
+            reverted[index] = { ...reverted[index], status: originalTask.status };
+            return reverted;
+          });
+        }
+      }, 500);
     }
   };
 

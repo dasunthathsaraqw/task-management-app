@@ -28,21 +28,21 @@ export const AdminLayout: React.FC = () => {
           {/* Left: Section Title / Greeting */}
           <div className="flex items-center space-x-3">
             <h2 className="text-lg font-medium text-slate-800 hidden sm:block">
-              Welcome back, <span className="font-semibold text-slate-900">{user?.username}</span>
+              Welcome back,{" "}
+              <span className="font-semibold text-slate-900">
+                {user?.username}
+              </span>
             </h2>
           </div>
 
           {/* Right: Profile details & Logout */}
           <div className="flex items-center space-x-4">
             <div className="text-right hidden md:block">
-              <p className="text-sm font-medium text-slate-800">{user?.username}</p>
+              <p className="text-sm font-medium text-slate-800">
+                {user?.username}
+              </p>
               <p className="text-xs text-slate-500">{user?.email}</p>
             </div>
-
-            {/* Admin Badge */}
-            <span className="px-2.5 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full uppercase tracking-wider">
-              {user?.role}
-            </span>
 
             {/* Divider */}
             <div className="h-6 w-px bg-slate-200"></div>

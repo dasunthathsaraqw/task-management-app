@@ -105,17 +105,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
       <div className="h-16 flex items-center px-4 border-b border-slate-800 justify-between">
         {!collapsed && (
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center font-bold text-white shadow-md">
-              A
+            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-md p-1">
+              <img
+                src="/images/logo.png"
+                alt="Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="font-semibold text-lg bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              AdminPortal
+              Admin Portal
             </span>
           </div>
         )}
         {collapsed && (
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-blue-500 flex items-center justify-center font-bold text-white shadow-md mx-auto">
-            A
+          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-md mx-auto p-1">
+            <img
+              src="/images/logo.png"
+              alt="Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
         )}
       </div>
@@ -135,7 +143,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
             }
           >
             <div className="flex-shrink-0">{item.icon}</div>
-            {!collapsed && <span className="transition-opacity duration-300">{item.label}</span>}
+            {!collapsed && (
+              <span className="transition-opacity duration-300">
+                {item.label}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

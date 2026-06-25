@@ -55,6 +55,9 @@ const Dashboard: React.FC = () => {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10 px-6 py-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
+            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm p-1 border border-slate-100">
+              <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+            </div>
             <h1 className="text-xl font-bold text-slate-800 tracking-tight">Task Board</h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
               {user?.role}
