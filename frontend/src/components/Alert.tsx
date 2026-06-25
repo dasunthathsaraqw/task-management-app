@@ -2,7 +2,7 @@ import React from "react";
 
 interface AlertProps {
   type?: "success" | "error" | "warning" | "info";
-  message: string;
+  message: React.ReactNode;
   onClose?: () => void;
 }
 
@@ -87,7 +87,7 @@ export const Alert: React.FC<AlertProps> = ({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <p className={`text-sm font-semibold ${s.title}`}>{titles[type]}</p>
-        <p className={`text-sm mt-0.5 leading-relaxed ${s.message}`}>{message}</p>
+        <div className={`text-sm mt-0.5 leading-relaxed ${s.message}`}>{message}</div>
       </div>
 
       {/* Close button */}

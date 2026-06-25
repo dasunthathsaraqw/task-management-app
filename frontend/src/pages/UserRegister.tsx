@@ -28,7 +28,7 @@ const registerSchema = yup.object({
 const UserRegister: React.FC = () => {
   const navigate = useNavigate();
   const { register: registerUser } = useAuth();
-  const [serverError, setServerError] = useState<string>("");
+  const [serverError, setServerError] = useState<React.ReactNode>("");
   const [loading, setLoading] = useState(false);
 
   const {
@@ -49,7 +49,17 @@ const UserRegister: React.FC = () => {
       const user = await registerUser(data, "user");
       navigate(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
     } catch (err: any) {
-      setServerError(err.message || "Registration failed. Please try again.");
+      if (Array.isArray(err)) {
+        setServerError(
+          <ul className="list-disc pl-5 space-y-1 mt-1 text-sm">
+            {err.map((e: any, i: number) => (
+              <li key={i}>{e.message}</li>
+            ))}
+          </ul>
+        );
+      } else {
+        setServerError(err.message || "Registration failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

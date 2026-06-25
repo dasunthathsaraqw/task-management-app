@@ -20,7 +20,7 @@ const loginSchema = yup.object({
 const UserLogin: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [serverError, setServerError] = useState<string>("");
+  const [serverError, setServerError] = useState<React.ReactNode>("");
   const [loading, setLoading] = useState(false);
 
   const {
@@ -41,7 +41,17 @@ const UserLogin: React.FC = () => {
       const user = await login(data, "user");
       navigate(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
     } catch (err: any) {
-      setServerError(err.message || "Login failed. Please check your credentials and try again.");
+      if (Array.isArray(err)) {
+        setServerError(
+          <ul className="list-disc pl-5 space-y-1 mt-1 text-sm">
+            {err.map((e: any, i: number) => (
+              <li key={i}>{e.message}</li>
+            ))}
+          </ul>
+        );
+      } else {
+        setServerError(err.message || "Login failed. Please check your credentials.");
+      }
     } finally {
       setLoading(false);
     }
