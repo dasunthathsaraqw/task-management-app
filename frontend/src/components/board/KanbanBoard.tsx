@@ -23,11 +23,12 @@ import { useToast } from "../../context/ToastContext";
 interface KanbanBoardProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
+  onAddTask: (status: string) => void;
 }
 
 const COLUMNS = ["Open", "In Progress", "Testing", "Done"];
 
-export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks: initialTasks, onTaskClick }) => {
+export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks: initialTasks, onTaskClick, onAddTask }) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const { showError, showSuccess } = useToast();
@@ -173,6 +174,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks: initialTasks, o
               title={col}
               tasks={tasks.filter((t) => t.status === col)}
               onTaskClick={onTaskClick}
+              onAddTask={onAddTask}
             />
           </div>
         ))}

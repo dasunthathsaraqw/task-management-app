@@ -17,6 +17,7 @@ interface CreateTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  defaultStatus?: string;
 }
 
 const schema = yup.object({
@@ -41,7 +42,7 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClose, onSuccess }) => {
+export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClose, onSuccess, defaultStatus }) => {
   const { showSuccess, showError } = useToast();
   const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
@@ -60,6 +61,13 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
       assignedTo: "",
     },
   });
+
+  // Reset and inject defaultStatus when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      reset({ priority: "Medium", assignedTo: "" });
+    }
+  }, [isOpen, reset]);
 
   useEffect(() => {
     if (isOpen && user?.role === "admin") {
@@ -88,6 +96,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
         priority: data.priority || "Medium",
         dueDate: data.dueDate,
         assignedTo: data.assignedTo === "" ? null : data.assignedTo,
+        ...(defaultStatus ? { status: defaultStatus } : {}),
       };
 
       if (user?.role === "admin") {
@@ -118,14 +127,18 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose}></div>
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden border border-slate-150 animate-slide-in max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-slide-in max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-          <h3 className="text-lg font-semibold text-slate-800">Create New Task</h3>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
-          >
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/30">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Create New Task</h3>
+            {defaultStatus && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Status: <span className="font-semibold text-purple-600 dark:text-purple-400">{defaultStatus}</span>
+              </p>
+            )}
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none cursor-pointer">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -133,7 +146,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto p-6 space-y-4 flex-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto p-6 space-y-4 flex-1 bg-white dark:bg-slate-800">
           <Input
             label="Task Title"
             placeholder="Enter descriptive title"
@@ -142,16 +155,18 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
           />
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5 transition-colors">Description</label>
             <textarea
               placeholder="Provide details about the task..."
               rows={4}
               {...register("description")}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm ${
-                errors.description ? "border-red-500" : "border-gray-300"
+              className={`w-full px-3.5 py-2.5 border-2 rounded-lg text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 resize-none ${
+                errors.description
+                  ? "border-red-400 bg-red-50 dark:bg-red-950/30 text-red-900 dark:text-red-300 placeholder-red-300 focus:border-red-500 focus:ring-red-200"
+                  : "border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 focus:border-purple-400 dark:focus:border-purple-500 focus:ring-purple-100 dark:focus:ring-purple-900/30"
               }`}
             />
-            {errors.description && <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>}
+            {errors.description && <p className="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400">{errors.description.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -185,7 +200,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
           )}
 
           {/* Actions */}
-          <div className="pt-4 border-t border-slate-200 flex justify-end space-x-3 bg-slate-50 -mx-6 -mb-6 p-6">
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end space-x-3 bg-slate-50 dark:bg-slate-900/30 -mx-6 -mb-6 p-6">
             <Button type="button" variant="secondary" onClick={onClose}>
               Cancel
             </Button>
