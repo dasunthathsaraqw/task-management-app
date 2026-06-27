@@ -4,28 +4,30 @@ A full-stack task management system that allows users to create, assign, track, 
 
 ## Features
 
-* **Task Management**: Create, view, edit, and update tasks with title, description, priority (Low/Medium/High), due date, and status (Open, In Progress, Testing, Done).
-* **Kanban Board**: Drag-and-drop Kanban board for normal users to easily update task statuses.
-* **Role-Based Access Control**:
-  * **Admin**: Can view and manage all tasks in the system. Has access to an admin dashboard with a table view and read-only Kanban board. Can assign tasks to any user.
-  * **User**: Can view and manage only their own tasks (created by them or assigned to them).
-* **User Management**: Registration and login using JWT authentication.
-* **UI/UX**: Responsive design with a polished, modern interface (including Dark Mode) built with Tailwind CSS. Features micro-animations and status history tracking.
+- **Task Management**: Create, view, edit, and update tasks with title, description, priority (Low/Medium/High), due date, and status (Open, In Progress, Testing, Done).
+- **Kanban Board**: Drag-and-drop Kanban board for normal users to easily update task statuses.
+- **Role-Based Access Control**:
+  - **Admin**: Can view and manage all tasks in the system. Has access to an admin dashboard with a table view and read-only Kanban board. Can assign tasks to any user.
+  - **User**: Can view and manage only their own tasks (created by them or assigned to them).
+- **User Management**: Registration and login using JWT authentication.
+- **UI/UX**: Responsive design with a polished, modern interface (including Dark Mode) built with Tailwind CSS. Features micro-animations and status history tracking.
 
 ## Technologies Used
 
-* **Frontend**: React, Vite, TypeScript, Tailwind CSS, DnD Kit (for drag-and-drop).
-* **Backend**: Express.js (Node.js), TypeScript.
-* **Database**: MongoDB (Mongoose).
-* **Authentication**: JSON Web Tokens (JWT).
+- **Frontend**: React, Vite, TypeScript, Tailwind CSS, DnD Kit (for drag-and-drop).
+- **Backend**: Express.js (Node.js), TypeScript.
+- **Database**: MongoDB (Mongoose).
+- **Authentication**: JSON Web Tokens (JWT).
 
 ## Setup Instructions
 
 ### Prerequisites
-* Node.js (v16 or higher recommended)
-* MongoDB instance (local or Atlas)
+
+- Node.js (v16 or higher recommended)
+- MongoDB instance (local or Atlas)
 
 ### Backend Setup
+
 1. Navigate to the `backend` directory:
    ```bash
    cd backend
@@ -46,6 +48,7 @@ A full-stack task management system that allows users to create, assign, track, 
    ```
 
 ### Frontend Setup
+
 1. Navigate to the `frontend` directory:
    ```bash
    cd frontend
@@ -69,3 +72,24 @@ A full-stack task management system that allows users to create, assign, track, 
 2. Register a new user account or log in.
 3. If you register as an Admin, you will see the Admin Dashboard with access to all tasks.
 4. If you register as a normal User, you will see the user Kanban board where you can create and manage your tasks.
+
+![image](<./UI-screenshot/ui(1).jpeg>)
+![image](<./UI-screenshot/ui(2).jpeg>)
+![image](<./UI-screenshot/ui(3).jpeg>)
+![image](<./UI-screenshot/ui(4).jpeg>)
+![image](<./UI-screenshot/ui(5).jpeg>)
+![image](<./UI-screenshot/ui(6).jpeg>)
+![image](<./UI-screenshot/ui(7).jpeg>)
+![image](<./UI-screenshot/ui(8).jpeg>)
+![image](<./UI-screenshot/ui(9).jpeg>)
+![image](<./UI-screenshot/ui(10).jpeg>)
+![image](<./UI-screenshot/ui(11).jpeg>)
+![image](<./UI-screenshot/ui(12).jpeg>)
+![image](<./UI-screenshot/ui(13).jpeg>)
+![image](<./UI-screenshot/ui(14).jpeg>)
+![image](<./UI-screenshot/ui(15).jpeg>)
+![image](<./UI-screenshot/ui(16).jpeg>)
+![image](<./UI-screenshot/ui(17).jpeg>)
+![image](<./UI-screenshot/ui(18).jpeg>)
+![image](<./UI-screenshot/ui(19).jpeg>)
+![image](<./UI-screenshot/ui(20).jpeg>)
