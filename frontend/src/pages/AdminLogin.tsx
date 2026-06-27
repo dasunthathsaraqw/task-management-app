@@ -137,6 +137,7 @@ const AdminLogin: React.FC = () => {
               placeholder="admin@example.com"
               {...registerField("email")}
               error={errors.email?.message}
+              helpText="(user name must be include one capital letter, one number)"
             />
             <Input
               type="password"

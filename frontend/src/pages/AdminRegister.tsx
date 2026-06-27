@@ -161,6 +161,7 @@ const AdminRegister: React.FC = () => {
               placeholder="Choose an admin username"
               {...registerField("username")}
               error={errors.username?.message}
+              helpText="(user name must be include one capital letter, one number)"
             />
             <Input
               type="email"
