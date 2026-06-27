@@ -3,9 +3,10 @@ import React, { useState } from "react";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
+  helpText?: string;
 }
 
-export const Input: React.FC<InputProps> = ({ label, error, id, ...props }) => {
+export const Input: React.FC<InputProps> = ({ label, error, helpText, id, ...props }) => {
   const inputId = id || label.toLowerCase().replace(/\s+/g, "-");
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordType = props.type === "password";
@@ -67,6 +68,12 @@ export const Input: React.FC<InputProps> = ({ label, error, id, ...props }) => {
           </div>
         )}
       </div>
+
+      {helpText && !error && (
+        <p className="mt-1.5 text-xs text-gray-500 dark:text-slate-400">
+          {helpText}
+        </p>
+      )}
 
       {error && (
         <p
