@@ -104,7 +104,6 @@ const UserLogin: React.FC = () => {
               placeholder="you@example.com"
               {...registerField("email")}
               error={errors.email?.message}
-              helpText="(user name must be include one capital letter, one number)"
             />
             <Input
               type="password"

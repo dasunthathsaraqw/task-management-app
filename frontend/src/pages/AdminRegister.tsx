@@ -161,7 +161,7 @@ const AdminRegister: React.FC = () => {
               placeholder="Choose an admin username"
               {...registerField("username")}
               error={errors.username?.message}
-              helpText="(user name must be include one capital letter, one number)"
+              helpText="(Username can only contain letters, numbers, and underscores)"
             />
             <Input
               type="email"
@@ -176,6 +176,7 @@ const AdminRegister: React.FC = () => {
               placeholder="Create a strong password (min. 6 characters)"
               {...registerField("password")}
               error={errors.password?.message}
+              helpText="(Password must contain at least one uppercase letter, one lowercase letter, and one number)"
             />
             <Input
               type="password"
